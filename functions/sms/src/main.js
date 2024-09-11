@@ -8,7 +8,7 @@ export default async ({ req, res, log, error }) => {
     .setEndpoint(process.env.APPWRITE_FUNCTION_API_ENDPOINT)
     .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID)
     .setKey(req.headers['x-appwrite-key'] ?? '');
-    const africastalking = require('africastalking')({
+  const africastalking = require('africastalking')({
       apiKey: process.env.AFRICASTALKING_API_KEY,
       username: process.env.AFRICASTALKING_USERNAME
   });
