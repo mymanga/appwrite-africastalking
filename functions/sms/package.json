@@ -8,6 +8,7 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "africastalking": "^0.7.0",
     "node-appwrite": "^12.0.1"
   },
   "devDependencies": {

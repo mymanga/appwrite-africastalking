@@ -8,28 +8,36 @@ export default async ({ req, res, log, error }) => {
     .setEndpoint(process.env.APPWRITE_FUNCTION_API_ENDPOINT)
     .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID)
     .setKey(req.headers['x-appwrite-key'] ?? '');
-  const users = new Users(client);
-
-  try {
-    const response = await users.list();
-    // Log messages and errors to the Appwrite Console
-    // These logs won't be seen by your end users
-    log(`Total users: ${response.total}`);
-  } catch(err) {
-    error("Could not list users: " + err.message);
-  }
-
-  // The req object contains the request data
-  if (req.path === "/ping") {
-    // Use res object to respond with text(), json(), or binary()
-    // Don't forget to return a response!
-    return res.text("Pong");
-  }
-
-  return res.json({
-    motto: "Build like a team of hundreds_",
-    learn: "https://appwrite.io/docs",
-    connect: "https://appwrite.io/discord",
-    getInspired: "https://builtwith.appwrite.io",
+    const africastalking = require('africastalking')({
+      apiKey: process.env.AFRICASTALKING_API_KEY,
+      username: process.env.AFRICASTALKING_USERNAME
   });
+  
+  async function sendSMS(to, message) {
+      const sms = africastalking.SMS;
+      try {
+          const response = await sms.send({
+              to: [to],
+              message: message,
+          });
+          console.log('SMS Sent', response);
+          return response;
+      } catch (error) {
+          console.error('Error sending SMS', error);
+          throw error;
+      }
+  }
+  
+  // Appwrite function handler
+  module.exports = async function(req, res) {
+      const { to, message } = JSON.parse(req.payload);
+      
+      try {
+          const result = await sendSMS(to, message);
+          res.json({ success: true, result });
+      } catch (error) {
+          res.json({ success: false, error: error.message });
+      }
+  };
+  
 };
